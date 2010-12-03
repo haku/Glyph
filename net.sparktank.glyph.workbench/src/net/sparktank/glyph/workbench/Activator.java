@@ -38,7 +38,7 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 	}
-
+	
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
