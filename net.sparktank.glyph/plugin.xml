@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.views" >
+      <category name="Glyph" id="net.sparktank.glyph" />
+      <view name="Glyph"
+            icon="icons/sample.gif"
+            category="net.sparktank.glyph"
+            class="net.sparktank.glyph.views.PlayView"
+            id="net.sparktank.glyph.views.PlayView" />
+   </extension>
+
+</plugin>
