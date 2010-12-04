@@ -56,11 +56,6 @@ public class PlayView extends ViewPart {
 	
 	Collection<QuestionGroup> allQuestionGroups = null;
 	
-	private BlockingQueue<Question> currentGameRemainingQuestions = null;
-	private Question currentGameQuestion = null;
-	private Collection<Question> currentGameAnswersCorrect = null;
-	private Collection<Question> currentGameAnswersIncorrect = null;
-	
 //	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //	ViewPart methods.
 	
@@ -215,7 +210,12 @@ public class PlayView extends ViewPart {
 	};
 	
 //	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//	Events.
+//	Game logic.
+	
+	private BlockingQueue<Question> currentGameRemainingQuestions = null;
+	private Question currentGameQuestion = null;
+	private Collection<Question> currentGameAnswersCorrect = null;
+	private Collection<Question> currentGameAnswersIncorrect = null;
 	
 	public void resetGame () {
 		this.currentGameRemainingQuestions = null;
