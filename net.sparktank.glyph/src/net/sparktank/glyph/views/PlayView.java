@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.sparktank.glyph.helpers.ColumnLayout;
 import net.sparktank.glyph.helpers.SwtHelper;
 import net.sparktank.glyph.model.Question;
 import net.sparktank.glyph.model.QuestionGroup;
@@ -57,6 +58,8 @@ public class PlayView extends ViewPart {
 	
 	private BlockingQueue<Question> currentGameRemainingQuestions = null;
 	private Question currentGameQuestion = null;
+	private Collection<Question> currentGameAnswersCorrect = null;
+	private Collection<Question> currentGameAnswersIncorrect = null;
 	
 //	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //	ViewPart methods.
@@ -92,8 +95,13 @@ public class PlayView extends ViewPart {
 	
 	CheckboxTableViewer tblQuestionSets;
 	private Button btnAddQuestions;
+	private Button btnResetGame;
+	
+	Composite playArea;
 	private Label lblQuestion;
+	private Label lblCorrectAnswer;
 	Text txtAnswer;
+	private Label lblStatus;
 	
 	private void createLayout (Composite parent) {
 		FormData formData;
@@ -102,17 +110,22 @@ public class PlayView extends ViewPart {
 		
 		this.tblQuestionSets = CheckboxTableViewer.newCheckList(parent, SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		this.btnAddQuestions = new Button(parent, SWT.NONE);
-		this.lblQuestion = new Label(parent, SWT.CENTER);
-		this.txtAnswer = new Text(parent, SWT.CENTER);
+		this.btnResetGame = new Button(parent, SWT.NONE);
+		
+		this.playArea = new Composite(parent, SWT.NONE);
+		this.lblQuestion = new Label(this.playArea, SWT.CENTER);
+		this.lblCorrectAnswer = new Label(this.playArea, SWT.CENTER);
+		this.txtAnswer = new Text(this.playArea, SWT.CENTER);
+		this.lblStatus = new Label(this.playArea, SWT.CENTER);
 		
 		this.tblQuestionSets.setContentProvider(this.contentProvider);
 		this.tblQuestionSets.setInput(getViewSite()); // use content provider.
 		
+		this.btnResetGame.setText("Reset");
 		this.btnAddQuestions.setText("Add questions");
-		this.lblQuestion.setText("Question?");
-		this.txtAnswer.setText("Answer!");
 		
 		SwtHelper.increaseFontSize(this.lblQuestion, 3);
+		SwtHelper.increaseFontSize(this.lblCorrectAnswer, 3);
 		
 		formData = new FormData();
 		formData.left = new FormAttachment(0, SEP);
@@ -123,22 +136,29 @@ public class PlayView extends ViewPart {
 		formData = new FormData();
 		formData.left = new FormAttachment(0, SEP);
 		formData.bottom = new FormAttachment(100, -SEP);
+		this.btnResetGame.setLayoutData(formData);
+		
+		formData = new FormData();
+		formData.left = new FormAttachment(this.btnResetGame, SEP);
+		formData.bottom = new FormAttachment(100, -SEP);
 		this.btnAddQuestions.setLayoutData(formData);
 		
+		this.playArea.setLayout(new ColumnLayout());
 		formData = new FormData();
 		formData.left = new FormAttachment(this.tblQuestionSets.getTable(), SEP);
 		formData.right = new FormAttachment(100, -SEP);
 		formData.top = new FormAttachment(0, SEP);
-		this.lblQuestion.setLayoutData(formData);
+		formData.bottom = new FormAttachment(100, SEP);
+		this.playArea.setLayoutData(formData);
 		
-		formData = new FormData();
-		formData.left = new FormAttachment(this.tblQuestionSets.getTable(), SEP);
-		formData.right = new FormAttachment(100, -SEP);
-		formData.top = new FormAttachment(this.lblQuestion, SEP);
-		this.txtAnswer.setLayoutData(formData);
-		
-		this.lblQuestion.setEnabled(false);
-		this.txtAnswer.setEnabled(false);
+		this.btnResetGame.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				resetGame();
+			}
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {/* UNUSED */}
+		});
 		
 		this.btnAddQuestions.addSelectionListener(new SelectionListener() {
 			@Override
@@ -174,6 +194,7 @@ public class PlayView extends ViewPart {
 			}
 		});
 		
+		resetGame();
 	}
 	
 	private IStructuredContentProvider contentProvider = new IStructuredContentProvider() {
@@ -196,6 +217,50 @@ public class PlayView extends ViewPart {
 //	- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //	Events.
 	
+	public void resetGame () {
+		this.currentGameRemainingQuestions = null;
+		this.currentGameQuestion = null;
+		this.currentGameAnswersCorrect = null;
+		this.currentGameAnswersIncorrect = null;
+		
+		this.lblQuestion.setText("Question?");
+		this.lblCorrectAnswer.setVisible(false);
+		this.txtAnswer.setText("Answer.");
+		
+		this.lblQuestion.setEnabled(false);
+		this.txtAnswer.setEnabled(false);
+		this.lblStatus.setEnabled(false);
+		
+		updateStatus();
+		this.playArea.layout();
+	}
+	
+	protected void updateStatus () {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		
+		if (this.currentGameAnswersCorrect != null) {
+			sb.append(this.currentGameAnswersCorrect.size());
+			sb.append(" correct.");
+			first = false;
+		}
+		
+		if (this.currentGameAnswersIncorrect != null) {
+			if (!first) sb.append("  ");
+			sb.append(this.currentGameAnswersIncorrect.size());
+			sb.append(" incorrect.");
+			first = false;
+		}
+		
+		if (this.currentGameRemainingQuestions != null) {
+			if (!first) sb.append("  ");
+			sb.append(this.currentGameRemainingQuestions.size());
+			sb.append(" questions remaining.");
+		}
+		
+		this.lblStatus.setText(sb.toString());
+	}
+	
 	void addQuestionsToGame (Collection<QuestionGroup> questionGroups) {
 		List<Question> questions = new LinkedList<Question>();
 		for (QuestionGroup qg : questionGroups) {
@@ -206,11 +271,18 @@ public class PlayView extends ViewPart {
 			return;
 		}
 		
+		// Shuffle into existing questions.
+		if (this.currentGameRemainingQuestions != null) questions.addAll(this.currentGameRemainingQuestions);
 		Collections.shuffle(questions);
+		this.currentGameRemainingQuestions = new LinkedBlockingQueue<Question>();
 		
-		this.currentGameRemainingQuestions = new LinkedBlockingQueue<Question>(questions);
+		if (this.currentGameAnswersCorrect == null) this.currentGameAnswersCorrect = new LinkedList<Question>();
+		if (this.currentGameAnswersIncorrect == null) this.currentGameAnswersIncorrect = new LinkedList<Question>();
 		
-		presentNextQuestion();
+		this.currentGameRemainingQuestions.addAll(questions);
+		updateStatus();
+		
+		if (this.currentGameQuestion == null) presentNextQuestion();
 	}
 	
 	protected void presentNextQuestion () {
@@ -218,11 +290,16 @@ public class PlayView extends ViewPart {
 		
 		if (this.currentGameQuestion != null) {
 			this.lblQuestion.setText(this.currentGameQuestion.getQuestion());
+			this.lblCorrectAnswer.setVisible(false);
 			this.txtAnswer.setText("");
+			
+			updateStatus();
 			
 			this.lblQuestion.setEnabled(true);
 			this.txtAnswer.setEnabled(true);
+			this.lblStatus.setEnabled(true);
 			
+			this.playArea.layout();
 			this.txtAnswer.setFocus();
 		}
 		else { // End of questions.
@@ -239,26 +316,33 @@ public class PlayView extends ViewPart {
 			String answer = this.txtAnswer.getText();
 			if (answer != null && answer.length() > 0) {
 				if (this.currentGameQuestion.answerIsCorrect(answer)) {
-					System.err.println("Correct.");
+					this.currentGameAnswersCorrect.add(this.currentGameQuestion);
+					presentNextQuestion();
 				}
 				else {
-					System.err.print("Wrong: ");
-					System.err.print(answer);
-					System.err.print(" != ");
+					this.currentGameAnswersIncorrect.add(this.currentGameQuestion);
+					
+					StringBuilder sb = new StringBuilder();
+					boolean first = true;
 					for (String correctAnswer : this.currentGameQuestion.getAnswers()) {
-						System.err.print(correctAnswer);
-						System.err.print(", ");
+						if (!first) sb.append("\n"); else first = false;;
+						sb.append(correctAnswer);
 					}
-					System.err.println();
+					this.lblCorrectAnswer.setText(sb.toString());
+					this.lblCorrectAnswer.setVisible(true);
+					this.txtAnswer.setEnabled(false);
+					getSite().getWorkbenchWindow().getShell().getDisplay().timerExec(2000, new Runnable() {
+						@Override
+						public void run() {
+							presentNextQuestion();
+						}
+					});
+					this.playArea.layout();
 				}
-				presentNextQuestion();
-			}
-			else {
-				System.err.println("No answer entered.");
 			}
 		}
 		else {
-			System.err.println("No question asked.");
+			System.err.println("No question asked."); // Should never happen.
 		}
 	}
 	
