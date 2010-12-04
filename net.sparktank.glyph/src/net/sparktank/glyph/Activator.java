@@ -16,6 +16,11 @@
 
 package net.sparktank.glyph;
 
+import java.util.Collection;
+
+import net.sparktank.glyph.model.QuestionGroup;
+import net.sparktank.glyph.model.QuestionHelper;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -33,6 +38,12 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		Collection<QuestionGroup> qs = QuestionHelper.getAllQuestionGroups();
+		System.out.println(qs.size() + " groups.");
+		for (QuestionGroup q : qs) {
+			System.out.println(q.getSymbolicName() + "=" + q.getHumanName() + " " + q.getQuestions().size());
+		}
 	}
 	
 	@Override

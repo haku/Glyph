@@ -2,7 +2,7 @@
 font=Arial Unicode MS
 
 #the basic, unmodified katakana.
-section=k0|basic katakana
+group=k0|basic katakana
 
 k0=ア|a
 k0=イ|i
@@ -61,7 +61,7 @@ k0=ヲ|wo
 k0=ン|n
 
 #modified katakana.
-section=k1|modified katakana
+group=k1|modified katakana
 
 k1=ガ|ga
 k1=ギ|gi
@@ -94,7 +94,7 @@ k1=ペ|pe
 k1=ポ|po
 
 #some more obscure katakana.
-section=k2|obscure katakana
+group=k2|obscure katakana
 k2=ヰ|wi
 k2=ヱ|we
 k2=ヴ|vu
@@ -104,7 +104,7 @@ k2=ヹ|ve
 k2=ヺ|vo
 
 #combo-katakana.
-section=k3|combo-katakana
+group=k3|combo-katakana
 k3=ｷｬ|kya
 k3=ｷｭ|kyu
 k3=ｷｮ|kyo
@@ -150,7 +150,7 @@ k3=ﾋﾟｭ|pyu
 k3=ﾋﾟｮ|pyo
 
 #the basic, unmodified hirigana.
-section=h0|basic hirigana
+group=h0|basic hirigana
 
 h0=あ|a
 h0=い|i
@@ -209,7 +209,7 @@ h0=を|wo
 h0=ん|n
 
 #modified hirigana.
-section=h1|modified hirigana
+group=h1|modified hirigana
 
 h1=が|ga
 h1=ぎ|gi
@@ -242,13 +242,13 @@ h1=ぺ|pe
 h1=ぽ|po
 
 #some more obscure hirigana.
-section=h2|obscure hirigana
+group=h2|obscure hirigana
 
 h2=ゐ|wi
 h2=ゑ|we
 
 #combo-hirigana.
-section=h3|combo-hirigana
+group=h3|combo-hirigana
 
 h3=きゃ|kya
 h3=きゅ|kyu
