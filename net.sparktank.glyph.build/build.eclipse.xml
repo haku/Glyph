@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== 
+      
+     ====================================================================== -->
+
+<project name="net.sparktank.glyph.build" default="main">
+
+	<target name="setup">
+		<!-- Main props file. -->
+		<property file="build.properties" />
+
+		<!-- Generated properties. -->
+		<tstamp>
+			<format property="timestamp" pattern="yyyyMMdd_HHmm" timezone="UTC" />
+		</tstamp>
+		<property name="buildId" value="${archivePrefix}-${releaseName}-${timestamp}" />
+		<property name="buildLabel" value="${buildType}.${buildId}" />
+
+		<!-- Configure build process. -->
+		<property name="outputDirectory" value="${basedir}/builds" />
+
+		<!-- Locate deltapack. -->
+		<property name="deltapack" value="${eclipse.home}/../eclipse-3.6.1-delta-pack" />
+		<echo message="deltapack=${deltapack}" />
+		<available property="haveDeltaPack" file="${deltapack}" />
+		<fail unless="haveDeltaPack" message="Deltapack not found." />
+
+		<!-- Configure RCP build process. -->
+		<property name="baseLocation" value="${eclipse.home}" />
+		<property name="builder" value="${basedir}" />
+		<property name="buildDirectory" value="${basedir}/buildDirectory" />
+		<property name="pluginPath" value="${basedir}/..${path.separator}${deltapack}" />
+		<property name="buildTempFolder" value="${buildDirectory}" />
+
+		<echo message="baseLocation=${baseLocation}" />
+		<echo message="builder=${builder}" />
+		<echo message="buildDirectory=${buildDirectory}" />
+		<echo message="pluginPath=${pluginPath}" />
+		<echo message="buildTempFolder=${buildTempFolder}" />
+	</target>
+
+	<target name="clean" depends="setup">
+		<delete dir="${buildDirectory}" failonerror="false" />
+		<delete dir="${outputDirectory}" failonerror="false" />
+
+		<antcall target="refreshWorkspace" />
+	</target>
+
+	<target name="refreshWorkspace">
+		<!-- Refresh eclipse workspace -->
+		<eclipse.convertPath fileSystemPath="${basedir}" property="resourcePath" />
+		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite" />
+	</target>
+
+	<target name="main" depends="setup,clean">
+		<!-- Call RCP build process. -->
+		<ant antfile="${eclipse.pdebuild.scripts}/productBuild/productBuild.xml" />
+
+		<!-- Move output. -->
+		<mkdir dir="${outputDirectory}" />
+		<move todir="${outputDirectory}">
+			<fileset dir="${buildDirectory}/${buildLabel}" includes="*.zip" />
+		</move>
+
+		<!-- Clean up. -->
+		<antcall target="refreshWorkspace" />
+	</target>
+
+</project>
