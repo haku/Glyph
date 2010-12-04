@@ -25,12 +25,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipException;
 
 import net.sparktank.glyph.Activator;
 import net.sparktank.glyph.helpers.ClassPathHelper;
@@ -52,8 +52,8 @@ public class QuestionHelper {
 	 * Search for .glyph files and parse them.
 	 * Search this bundle and the system classpath.
 	 */
-	static public Collection<QuestionGroup> getAllQuestionGroups () throws ZipException, IOException {
-		final Collection<QuestionGroup> ret = new LinkedList<QuestionGroup>();
+	static public Collection<QuestionGroup> getAllQuestionGroups () throws IOException {
+		final List<QuestionGroup> ret = new LinkedList<QuestionGroup>();
 		
 		Bundle bundle = Activator.getDefault().getBundle();
 		@SuppressWarnings("unchecked")
@@ -94,6 +94,13 @@ public class QuestionHelper {
 				}
 			}
 			
+		});
+		
+		Collections.sort(ret, new Comparator<QuestionGroup>() {
+			@Override
+			public int compare(QuestionGroup o1, QuestionGroup o2) {
+				return o1.getSymbolicName().compareTo(o2.getSymbolicName());
+			};
 		});
 		
 		return Collections.unmodifiableCollection(ret);
