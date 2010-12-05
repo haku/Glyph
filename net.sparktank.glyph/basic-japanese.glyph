@@ -1,0 +1,73 @@
+group=b0|particles
+
+b0=です|desu
+
+group=b1|misc
+
+b1=でんわばんごう|denwabangou|phone number
+b1=うち|uchi|house
+b1=これ|kore|this one
+b1=こちら|kochira|this person
+
+b1=なまえ|namae|name
+b1=けえたい|keetai|phone|cell phone|mobile phone
+b1=しんぶん|shinfun|newspaper
+b1=かさ|kasa|umbrella
+b1=ほん|hon|book
+b1=かぎ|kagi|key
+b1=とけい|tokei|watch
+
+group=b2|greetings
+
+b2=おはよう　ございます|ohayou gozaimasu
+b2=こんにちわ|konnichiwa
+b2=こんばんわ|konbanwa
+b2=おやすみ　なさい|oyasumi nasai
+
+b2=お元気ですか? |o genki desu ka?
+b2=変わったことある？|kawatta koto aru?
+
+group=b3|professions
+
+b3=いしゃ|isha|doctor
+b3=かいしゃいん|kaishain|employee
+b3=がくせい|gakusei|student
+
+group=b4|family
+
+b4=父|chichi|father
+b4=お父さん|otousan|father
+b4=母|haha|mother
+b4=お母さん|okaasan|mother
+b4=兄|ani|older brother
+b4=お兄さん|oniisan|older brother
+b4=姉|ane|older sister
+b4=お姉さん|oneesan|older sister
+b4=弟|otouto|younger brother
+b4=弟さん|otoutosan|younger brother
+b4=妹|imouto|younger sister
+b4=妹さん|imoutosanyounger sister
+b4=祖父|sofu|grandfather
+b4=おじいさん|ojiisan|grandfather
+b4=祖母|sobo|grandmother
+b4=おばあさん|obaasan|grandmother
+b4=叔父|oji|uncle
+b4=伯父|oji|uncle
+b4=おじさん|ojisan|uncle
+b4=叔母|oba|aunt
+b4=伯母|oba|aunt
+b4=おばさん|obasan|aunt
+b4=夫|otto|husband
+b4=ご主人|goshujin|husband
+b4=妻|tsuma|wife
+b4=奥さん|okusan|wife
+b4=息子|musuko|son
+b4=息子さん|musukosan|son
+b4=娘|musume|daughter
+b4=お嬢さんojousan|daughter
+
+group=b5|countires
+
+b5=イギリス|igirisu
+b5=にほん|nihon
+TODO
